@@ -31,13 +31,17 @@ func (gb GenericBrowser) Open(s string) error {
 		return err
 	}
 
-	u.Scheme = "http"
+	// Enforce a scheme so linux and darwin work properly
+	if u.Scheme != "https" {
+		u.Scheme = "http"
+	}
 	s = u.String()
 
 	cmd := exec.Command(gb.cmd, append(gb.args, s)...)
 	return cmd.Run()
 }
 
+// Open opens an URL on the first available candidate found.
 func Open(s string) error {
 	if len(Candidates) == 0 {
 		return ErrNoCandidates
@@ -53,10 +57,12 @@ func Open(s string) error {
 	return ErrCantOpen
 }
 
-// Register a browser connector and, optionally, connection.
+// Register registers in the Candidates list (append to end).
 func Register(name Browser) {
-	// Append
 	Candidates = append(Candidates, name)
-	// Prepend
-	// Candidates = append([]Browser{name}, Candidates...)
+}
+
+// RegisterPrep registers in the Candidates list (prepend to start).
+func RegisterPrep(name Browser) {
+	Candidates = append([]Browser{name}, Candidates...)
 }
