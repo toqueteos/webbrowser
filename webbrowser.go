@@ -21,8 +21,8 @@ type Browser interface {
 
 // GenericBrowser
 type GenericBrowser struct {
-	cmd  string
-	args []string
+	Cmd  string
+	Args []string
 }
 
 func (gb GenericBrowser) Open(s string) error {
@@ -37,7 +37,7 @@ func (gb GenericBrowser) Open(s string) error {
 	}
 	s = u.String()
 
-	cmd := exec.Command(gb.cmd, append(gb.args, s)...)
+	cmd := exec.Command(gb.Cmd, append(gb.Args, s)...)
 	return cmd.Run()
 }
 
