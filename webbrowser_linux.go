@@ -1,5 +1,5 @@
 package webbrowser
 
 func init() {
-	Register(GenericBrowser{"/bin/sh", []string{, "-c", "xdg-open"}})
+	Register(GenericBrowser{"/bin/sh", []string{"-c", "xdg-open"}})
 }
