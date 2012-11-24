@@ -11,15 +11,16 @@ var (
 	ErrNoCandidates = errors.New("webbrowser.Open: no browser candidate found for your OS.")
 )
 
-//
+// List of registered `Browser`s that will be tried with Open.
 var Candidates []Browser
 
-// Browser
 type Browser interface {
 	Open(string) error
 }
 
-// GenericBrowser
+// GenericBrowser just holds a command name (usually `/bin/bash` or `cmd`) and
+// its arguments; the url will be appended as last arg. If you need to use
+// string replacement for url define your own implementation.
 type GenericBrowser struct {
 	Cmd  string
 	Args []string
