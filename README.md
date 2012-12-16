@@ -5,6 +5,8 @@ Webbrowser provides a simple API for opening web pages on your default browser. 
 
 It just opens a webpage, most browsers will open it on a new tab.
 
+It is licensed under the MIT open source license, please see the [LICENSE.txt](https://github.com/toqueteos/webbrowser/blob/master/LICENSE.txt) file for more information.
+
 Installation
 ============
 
