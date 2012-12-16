@@ -17,10 +17,10 @@ Usage
 
 Just import the package (after you got it):
 
-    `import "github.com/toqueteos/webbrowser"`
+    import "github.com/toqueteos/webbrowser"
 
 Then use the `Open` function.
 
-    `Open("http://golang.org")`
+    Open("http://golang.org")
 
 Just in case, you have a very simple example on [`examples/simple.go`](https://github.com/toqueteos/webbrowser/blob/master/examples/simple.go).
