@@ -74,21 +74,24 @@ func RegisterPrep(name Browser) {
 	candidates = append([]Browser{name}, candidates...)
 }
 
-var osCommand = map[string]string{
-	"darwin":  "open",
-	"freebsd": "xdg-open",
-	"linux":   "xdg-open",
-	"netbsd":  "xdg-open",
-	"openbsd": "xdg-open", // It may be open instead
-	"windows": "start",
+type args struct {
+	cmd  string
+	args []string
+}
+
+var osCommand = map[string]*args{
+	"darwin":  &args{"open", nil},
+	"freebsd": &args{"xdg-open", nil},
+	"linux":   &args{"xdg-open", nil},
+	"netbsd":  &args{"xdg-open", nil},
+	"openbsd": &args{"xdg-open", nil}, // It may be open instead
+	"windows": &args{"cmd", []string{"/c", "start"}},
 }
 
 func init() {
-	var args []string
-
 	// Register a generic browser, if any, for current OS.
-	cmd, ok := osCommand[runtime.GOOS]
+	os, ok := osCommand[runtime.GOOS]
 	if ok {
-		Register(GenericBrowser{cmd, args})
+		Register(GenericBrowser{os.cmd, os.args})
 	}
 }
