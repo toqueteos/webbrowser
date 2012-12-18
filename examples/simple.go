@@ -1,6 +1,6 @@
 package main
 
-import "webbrowser"
+import "github.com/toqueteos/webbrowser"
 
 func main() {
 	webbrowser.Open("http://golang.org")
