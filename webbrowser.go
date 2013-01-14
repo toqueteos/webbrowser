@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os/exec"
 	"runtime"
+	"strings"
 )
 
 var (
@@ -38,6 +39,14 @@ func (gb GenericBrowser) Open(s string) error {
 		u.Scheme = "http"
 	}
 	s = u.String()
+
+	// Escape characters not allowed by cmd/bash
+	switch runtime.GOOS {
+	case "windows":
+		s = strings.Replace(s, "&", `^&`, -1)
+	default:
+		s = strings.Replace(s, "&", `\&`, -1)
+	}
 
 	var cmd *exec.Cmd
 	if gb.Args != nil {
