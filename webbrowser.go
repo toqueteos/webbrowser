@@ -2,6 +2,7 @@ package webbrowser
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
 	"os"
 	"os/exec"
@@ -98,13 +99,13 @@ func Open(s string) error {
 		// No display, no need to open a browser. Lynx users **MAY** have
 		// something to say about this.
 		if os.Getenv("DISPLAY") == "" {
-			return fmt.Errorf("Tried to open %q on default webbrowser, no screen found.\n", url))
+			return fmt.Errorf("Tried to open %q on default webbrowser, no screen found.\n", s)
 		}
 		fallthrough
 	case "darwin":
 		// Check SSH env vars.
 		if os.Getenv("SSH_CLIENT") != "" || os.Getenv("SSH_TTY") != "" {
-			return fmt.Errorf("Tried to open %q on default webbrowser, but you are running a shell session.\n", url))
+			return fmt.Errorf("Tried to open %q on default webbrowser, but you are running a shell session.\n", s)
 		}
 	}
 
