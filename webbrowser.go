@@ -3,18 +3,39 @@ package webbrowser
 import (
 	"errors"
 	"net/url"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
 )
 
+func init() {
+	// Register a generic browser, if any, for current OS.
+	if os, ok := osCommand[runtime.GOOS]; ok {
+		Candidates = append(Candidates, GenericBrowser{os.cmd, os.args})
+	}
+}
+
+type args struct {
+	cmd  string
+	args []string
+}
+
 var (
+	osCommand = map[string]*args{
+		"darwin":  &args{"open", nil},
+		"freebsd": &args{"xdg-open", nil},
+		"linux":   &args{"xdg-open", nil},
+		"netbsd":  &args{"xdg-open", nil},
+		"openbsd": &args{"xdg-open", nil}, // It may be open instead
+		"windows": &args{"cmd", []string{"/c", "start"}},
+	}
 	ErrCantOpen     = errors.New("webbrowser.Open: can't open webpage")
 	ErrNoCandidates = errors.New("webbrowser.Open: no browser candidate found for your OS.")
 )
 
 // List of registered `Browser`s that will be tried with Open.
-var candidates []Browser
+var Candidates []Browser
 
 type Browser interface {
 	Open(string) error
@@ -34,7 +55,7 @@ func (gb GenericBrowser) Open(s string) error {
 		return err
 	}
 
-	// Enforce a scheme
+	// Enforce a scheme (windows requires scheme to be set to work properly).
 	if u.Scheme != "https" {
 		u.Scheme = "http"
 	}
@@ -59,48 +80,33 @@ func (gb GenericBrowser) Open(s string) error {
 
 // Open opens an URL on the first available candidate found.
 func Open(s string) error {
-	if len(candidates) == 0 {
+	if len(Candidates) == 0 {
 		return ErrNoCandidates
 	}
 
-	for _, b := range candidates {
+	for _, b := range Candidates {
 		err := b.Open(s)
 		if err == nil {
 			return nil
 		}
 	}
 
-	return ErrCantOpen
-}
-
-// Register registers in the candidates list (append to end).
-func Register(name Browser) {
-	candidates = append(candidates, name)
-}
-
-// RegisterPrep registers in the candidates list (prepend to start).
-func RegisterPrep(name Browser) {
-	candidates = append([]Browser{name}, candidates...)
-}
-
-type args struct {
-	cmd  string
-	args []string
-}
-
-var osCommand = map[string]*args{
-	"darwin":  &args{"open", nil},
-	"freebsd": &args{"xdg-open", nil},
-	"linux":   &args{"xdg-open", nil},
-	"netbsd":  &args{"xdg-open", nil},
-	"openbsd": &args{"xdg-open", nil}, // It may be open instead
-	"windows": &args{"cmd", []string{"/c", "start"}},
-}
-
-func init() {
-	// Register a generic browser, if any, for current OS.
-	os, ok := osCommand[runtime.GOOS]
-	if ok {
-		Register(GenericBrowser{os.cmd, os.args})
+	// Try to determine if there's a display available (only linux) and we
+	// aren't on a terminal (all but windows).
+	switch runtime.GOOS {
+	case "linux":
+		// No display, no need to open a browser. Lynx users **MAY** have
+		// something to say about this.
+		if os.Getenv("DISPLAY") == "" {
+			return errors.New(fmt.Printf("Tried to open %q on default webbrowser, no screen found.\n", url))
+		}
+		fallthrough
+	case "darwin":
+		// Check SSH env vars.
+		if os.Getenv("SSH_CLIENT") != "" || os.Getenv("SSH_TTY") != "" {
+			return errors.New(fmt.Printf("Tried to open %q on default webbrowser, but you are running a shell session.\n", url))
+		}
 	}
+
+	return ErrCantOpen
 }
