@@ -66,8 +66,6 @@ func (gb GenericBrowser) Open(s string) error {
 	switch runtime.GOOS {
 	case "windows":
 		s = strings.Replace(s, "&", `^&`, -1)
-	default:
-		s = strings.Replace(s, "&", `\&`, -1)
 	}
 
 	var cmd *exec.Cmd
