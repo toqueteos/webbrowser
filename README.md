@@ -12,7 +12,7 @@ It is licensed under the MIT open source license, please see the [LICENSE.txt](h
 Crossplatform support
 =====================
 
-The package is guaranteed to work on `windows`, `linux` and `darwin`. It also has default support for `freebsd`, `openbsd` and `netbsd` but these three hasn't been tested yet.
+The package is guaranteed to work on `windows`, `linux` and `darwin`. It also has default support for `freebsd`, `openbsd` and `netbsd` but these three have not been tested yet (that I'm aware of).
 
 Installation
 ============
