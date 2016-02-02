@@ -10,17 +10,17 @@ Copy & Paste fans: `go get github.com/toqueteos/webbrowser`
 
 ## Usage
 
-Import the package (once you have installed it):
+```go
+package main
 
-    import "github.com/toqueteos/webbrowser"
+import "github.com/toqueteos/webbrowser"
 
-Then use the `Open` function.
-
+func main() {
     webbrowser.Open("http://golang.org")
+}
+```
 
 That's it!
-
-Need a full blown example? Checkout [examples/simple.go].
 
 ## Already disliking it?
 
