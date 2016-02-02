@@ -1,4 +1,4 @@
-# webbrowser [![Build Status](https://travis-ci.org/toqueteos/webbrowser.png?branch=master)](https://travis-ci.org/toqueteos/webbrowser) [![GoDoc](http://godoc.org/github.com/toqueteos/webbrowser?status.png)](http://godoc.org/github.com/toqueteos/webbrowser) [![GitHub release](https://img.shields.io/github/release/toqueteos/webbrowser.svg)](https://github.com/toqueteos/webbrowser/releases)
+# webbrowser [![Build Status](https://travis-ci.org/toqueteos/webbrowser.png?branch=master)](https://travis-ci.org/toqueteos/webbrowser) [![GoDoc](http://godoc.org/github.com/toqueteos/webbrowser?status.png)](http://godoc.org/github.com/toqueteos/webbrowser)
 
 webbrowser provides a simple API for opening web pages on your default browser. It's inspired on [Python's webbrowser](http://docs.python.org/3.3/library/webbrowser.html) package but lacks some of its features (open new window).
 
