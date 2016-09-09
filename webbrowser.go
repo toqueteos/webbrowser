@@ -1,3 +1,5 @@
+// Package webbrowser provides a simple API for opening web pages on your
+// default browser.
 package webbrowser
 
 import (
@@ -15,30 +17,25 @@ var (
 	ErrNoCandidates    = errors.New("webbrowser: no browser candidate found for your OS")
 )
 
-// List of registered `Browser`s that will be tried with Open.
+// Candidates contains a list of registered `Browser`s that will be tried with Open.
 var Candidates []Browser
 
 type Browser interface {
+	// Command returns a ready to be used Cmd that will open an URL.
+	Command(string) (*exec.Cmd, error)
+	// Open tries to open a URL in your default browser. NOTE: This may cause
+	// your program to hang until the browser process is closed in some OSes,
+	// see https://github.com/toqueteos/webbrowser/issues/4.
 	Open(string) error
 }
 
-// Open opens an URL on the first available candidate found.
+// Open tries to open a URL in your default browser ensuring you have a display
+// set up and not running this from SSH. NOTE: This may cause your program to
+// hang until the browser process is closed in some OSes, see
+// https://github.com/toqueteos/webbrowser/issues/4.
 func Open(s string) (err error) {
 	if len(Candidates) == 0 {
 		return ErrNoCandidates
-	}
-
-	var lastError error
-	for _, candidate := range Candidates {
-		err := candidate.Open(s)
-		if err == nil {
-			return nil
-		} else {
-			lastError = err
-		}
-	}
-	if lastError != nil {
-		return lastError
 	}
 
 	// Try to determine if there's a display available (only linux) and we
@@ -58,11 +55,19 @@ func Open(s string) (err error) {
 		}
 	}
 
+	// Try all candidates
+	for _, candidate := range Candidates {
+		err := candidate.Open(s)
+		if err == nil {
+			return nil
+		}
+	}
+
 	return ErrCantOpenBrowser
 }
 
 func init() {
-	// Register a generic browser, if any, for current OS.
+	// Register the default Browser for current OS, if it exists.
 	if os, ok := osCommand[runtime.GOOS]; ok {
 		Candidates = append(Candidates, browserCommand{os.cmd, os.args})
 	}
@@ -84,17 +89,36 @@ type browserCommand struct {
 	args []string
 }
 
-func (b browserCommand) Open(s string) error {
+func (b browserCommand) Command(s string) (*exec.Cmd, error) {
 	u, err := url.Parse(s)
+	if err != nil {
+		return nil, err
+	}
+
+	validUrl := ensureValidURL(u)
+
+	if len(b.args) > 0 {
+		b.args = append(b.args, validUrl)
+	}
+
+	return exec.Command(b.cmd, b.args...), nil
+}
+
+func (b browserCommand) Open(s string) error {
+	cmd, err := b.Command(s)
 	if err != nil {
 		return err
 	}
 
+	return cmd.Run()
+}
+
+func ensureValidURL(u *url.URL) string {
 	// Enforce a scheme (windows requires scheme to be set to work properly).
 	if u.Scheme != "https" {
 		u.Scheme = "http"
 	}
-	s = u.String()
+	s := u.String()
 
 	// Escape characters not allowed by cmd/bash
 	switch runtime.GOOS {
@@ -102,12 +126,5 @@ func (b browserCommand) Open(s string) error {
 		s = strings.Replace(s, "&", `^&`, -1)
 	}
 
-	var cmd *exec.Cmd
-	if b.args != nil {
-		cmd = exec.Command(b.cmd, append(b.args, s)...)
-	} else {
-		cmd = exec.Command(b.cmd, s)
-	}
-
-	return cmd.Run()
+	return s
 }
