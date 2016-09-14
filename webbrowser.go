@@ -97,9 +97,7 @@ func (b browserCommand) Command(s string) (*exec.Cmd, error) {
 
 	validUrl := ensureValidURL(u)
 
-	if len(b.args) > 0 {
-		b.args = append(b.args, validUrl)
-	}
+	b.args = append(b.args, validUrl)
 
 	return exec.Command(b.cmd, b.args...), nil
 }
