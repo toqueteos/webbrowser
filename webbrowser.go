@@ -75,6 +75,7 @@ func init() {
 
 var (
 	osCommand = map[string]*browserCommand{
+		"android": &browserCommand{"xdg-open", nil},
 		"darwin":  &browserCommand{"open", nil},
 		"freebsd": &browserCommand{"xdg-open", nil},
 		"linux":   &browserCommand{"xdg-open", nil},
