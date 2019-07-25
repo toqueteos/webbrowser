@@ -14,6 +14,10 @@ As simple as:
 go get -u github.com/toqueteos/webbrowser
 ```
 
+It is Go modules compatible!
+
+_(`go.mod` was explicitly added in version `v1.2.0`)_
+
 ## Usage
 
 ```go
