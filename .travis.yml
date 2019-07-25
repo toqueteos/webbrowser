@@ -2,11 +2,8 @@ language: go
 
 go:
   - 1.2
-  - 1.3
-  - 1.4
-  - 1.5
+  - 1.12
   - tip
 
 script:
-  - go get -t ./...
-  - go test ./...
+  - go build ./...
