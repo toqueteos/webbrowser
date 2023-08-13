@@ -1,0 +1,29 @@
+name: platform-ci
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - "go.mod"
+      - "webbrowser.go"
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "go.mod"
+      - "webbrowser.go"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ">=1.20"
+          check-latest: true
+
+      - name: Test
+        run: go test -v ./...
