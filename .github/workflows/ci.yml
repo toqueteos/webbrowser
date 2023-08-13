@@ -1,4 +1,4 @@
-name: platform-ci
+name: webbrowser-ci
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
       - "webbrowser.go"
 
 jobs:
-  build:
+  run-ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
