@@ -1,0 +1,4 @@
+package webbrowser
+
+func init() {
+}
